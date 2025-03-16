@@ -1,0 +1,23 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const login = document.querySelector('#login');
+    const login_btn = document.querySelector('#login-btn');
+    const signup = document.querySelector('#signup');
+    const signup_btn = document.querySelector('#signup-btn');
+
+    signup.style.display = 'none';
+    login.style.display = 'block';
+
+    login_btn.addEventListener("click", function () {
+        login.style.display = "block";
+        signup.style.display = "none";
+    });
+
+    signup_btn.addEventListener("click", function () {
+        login.style.display = "none";
+        signup.style.display = "block";
+    });
+});
+
+
+
+
