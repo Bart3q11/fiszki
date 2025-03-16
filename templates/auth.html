@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards</title>
+    <link rel="shortcut icon" href="../static/assets/flashcard_logo.svg" type="image/x-icon">
+    <link rel="stylesheet" href="../static/css/normalize.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <script src="../static/js/bootstrap.bundle.js.map"></script>
+</head>
+
+<body data-bs-theme="dark">
+    <div id="login">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <form action="/login" method="post" class="border border-warning-subtle p-4 rounded shadow m-1"
+                style="width: min(600px, 100%);">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Adres e-mail</label>
+                    <input type="email" class="form-control focus-ring border" id="email" placeholder="Wpisz e-mail"
+                        style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" name="email" required>
+                </div>
+                <div class=" mb-3">
+                    <label for="password" class="form-label">Hasło</label>
+                    <input type="password" class="form-control focus-ring border" id="password"
+                        placeholder="Wpisz hasło" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        name="password" required>
+                </div>
+                <div class="d-grid gap-2 mb-3">
+                    <button type="submit" class="btn btn-warning text-white">Zaloguj się</button>
+                </div>
+                <p>Nie masz konta? <a class="text-warning" id="signup-btn">Zarejestruj się</a></p>
+            </form>
+        </div>
+    </div>
+    <div id="signup">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <form action="/signup" method="post" class="border border-warning-subtle p-4 rounded shadow m-1"
+                style="width: min(600px, 100%);">
+                <div class="mb-3">
+                    <label for="first-name" class="form-label">Imie</label>
+                    <input type="text" class="form-control focus-ring border" id="first-name" placeholder="Wpisz imie"
+                        style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" name="first-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="last-name" class="form-label">Nazwisko</label>
+                    <input type="text" class="form-control focus-ring border" id="last-name"
+                        placeholder="Wpisz nazwisko" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        name="last-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="signup-email" class="form-label">Adres e-mail</label>
+                    <input type="email" class="form-control focus-ring border" id="signup-email"
+                        placeholder="Wpisz e-mail" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="signup-password" class="form-label">Hasło</label>
+                    <input type="password" class="form-control focus-ring border" id="signup-password"
+                        placeholder="Wpisz hasło" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        name="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="re-password" class="form-label">Powtórz hasło</label>
+                    <input type="password" class="form-control focus-ring border" id="re-password"
+                        placeholder="Wpisz ponownie hasło" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        required>
+                </div>
+                <div class="d-grid gap-2 mb-3">
+                    <button type="submit" class="btn btn-warning text-white">Zarejestruj się</button>
+                </div>
+                <p>Masz konto? <a id="login-btn" class="text-warning">Zaloguj się</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="../static/js/auth.js"></script>
+</body>
+
+</html>
