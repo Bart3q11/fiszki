@@ -1,0 +1,30 @@
+/flashcards-app/
+│── /static/               # Pliki statyczne (CSS, JS, obrazy)
+│   ├── /css/
+│   │   ├── styles.css      # Główne style (możliwość modyfikacji Bootstrapa)
+│   │   ├── bootstrap.min.css # Bootstrap (opcjonalnie dostosowany)
+│   ├── /js/
+│   │   ├── main.js         # Logika frontendu
+│   │   ├── flashcards.js   # Obsługa fiszek (tryb nauki/przeglądania)
+│   ├── /img/               # Obrazy (jeśli potrzebne)
+│── /templates/             # Szablony HTML
+│   ├── base.html           # Bazowy szablon (np. navbar, footer)
+│   ├── index.html          # Strona główna
+│   ├── create_set.html     # Tworzenie zestawu fiszek
+│   ├── view_set.html       # Tryb przeglądania fiszek
+│   ├── learn_set.html      # Tryb nauki fiszek
+│── /models/                # Modele dla bazy danych
+│   ├── __init__.py         # Inicjalizacja folderu jako modułu
+│   ├── database.py         # Połączenie z bazą MySQL
+│   ├── flashcard.py        # Model dla fiszek
+│   ├── user.py             # Model użytkownika (jeśli planujesz dodawać użytkowników)
+│── /routes/                # Trasy aplikacji Flask
+│   ├── __init__.py         # Inicjalizacja folderu jako modułu
+│   ├── main.py             # Główne trasy (np. strona główna)
+│   ├── flashcards.py       # Trasy związane z fiszkami (dodawanie, edycja, przeglądanie)
+│── /config/                # Konfiguracja aplikacji
+│   ├── config.py           # Ustawienia aplikacji (np. połączenie z bazą)
+│── app.py                  # Główna aplikacja Flask
+│── requirements.txt        # Lista zależności (biblioteki Pythona)
+│── README.md               # Opis projektu
+

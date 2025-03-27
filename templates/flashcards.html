@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+{% block body %}
+<nav class="navbar bg-warning sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand text" href="{{ url_for('dashboard')}}">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30"
+                zoomAndPan="magnify" viewBox="0 0 810 809.999993" height="30" preserveAspectRatio="xMidYMid meet"
+                version="1.0">
+                <defs>
+                    <clipPath id="33eb6bc529">
+                        <path
+                            d="M 75 0 L 735 0 C 776.421875 0 810 33.578125 810 75 L 810 735 C 810 776.421875 776.421875 810 735 810 L 75 810 C 33.578125 810 0 776.421875 0 735 L 0 75 C 0 33.578125 33.578125 0 75 0 Z M 75 0 "
+                            clip-rule="nonzero" />
+                    </clipPath>
+                    <clipPath id="6418fbb3b2">
+                        <path d="M 158 168 L 641 168 L 641 643 L 158 643 Z M 158 168 " clip-rule="nonzero" />
+                    </clipPath>
+                    <clipPath id="0cf016a7c5">
+                        <path
+                            d="M 373.480469 121.933594 L 657.839844 278.789062 L 387.597656 768.695312 L 103.238281 611.839844 Z M 373.480469 121.933594 "
+                            clip-rule="nonzero" />
+                    </clipPath>
+                    <clipPath id="32e8a89e89">
+                        <path
+                            d="M 373.480469 121.933594 L 657.839844 278.789062 L 387.597656 768.695312 L 103.238281 611.839844 Z M 373.480469 121.933594 "
+                            clip-rule="nonzero" />
+                    </clipPath>
+                </defs>
+                <g clip-path="url(#33eb6bc529)">
+                    <path stroke-linecap="butt" transform="matrix(0.75, 0, 0, 0.75, 0.0000035, 0.00002)" fill="none"
+                        stroke-linejoin="miter"
+                        d="M 100 -0.0000266667 L 980.000045 -0.0000266667 C 1035.229214 -0.0000266667 1080.00005 44.770809 1080.00005 99.999978 L 1080.00005 980.000023 C 1080.00005 1035.229192 1035.229214 1080.000028 980.000045 1080.000028 L 100 1080.000028 C 44.770831 1080.000028 -0.00000466667 1035.229192 -0.00000466667 980.000023 L -0.00000466667 99.999978 C -0.00000466667 44.770809 44.770831 -0.0000266667 100 -0.0000266667 Z M 100 -0.0000266667 "
+                        stroke="currentColor" stroke-width="200" stroke-opacity="1" stroke-miterlimit="4" />
+                </g>
+                <g clip-path="url(#6418fbb3b2)">
+                    <g clip-path="url(#0cf016a7c5)">
+                        <g clip-path="url(#32e8a89e89)">
+                            <path fill="currentColor"
+                                d="M 457.730469 168.421875 L 640.226562 269.089844 L 483.628906 370.386719 L 578.394531 422.664062 L 158.09375 642.457031 L 359.605469 420.972656 L 243.792969 357.089844 L 457.730469 168.421875 "
+                                fill-opacity="1" fill-rule="nonzero" />
+                        </g>
+                    </g>
+                </g>
+            </svg>
+            Fiszki
+        </a>
+
+        <a class="navbar-brand text" href="{{ url_for('account')}}">
+            <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px"
+                fill="currentColor">
+                <path
+                    d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
+            </svg>
+        </a>
+    </div>
+</nav>
+
+<div id="cards" class="container m-5 d-flex justify-content-center align-items-center flex-wrap flex-column">
+    <div class="m-1" id="card">
+        <div class="card_front">Front</div>
+        <div class="card_back">Back</div>
+    </div>
+    <div class="d-flex flex-row  justify-content-between gap-3">
+        <button type="submit" class="btn btn-warning flex-grow-1">Umiem</button>
+        <button type="submit" class="btn btn-warning flex-grow-1">Nie umiem</button>
+    </div>
+    <script src="{{ url_for('static', filename='js/deck.js' )}}"></script>
+
+    {% endblock %}

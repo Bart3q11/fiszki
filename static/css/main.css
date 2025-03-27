@@ -1,0 +1,130 @@
+body {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+/*Flipowanie karty*/
+#card {
+    position: relative;
+    width: 300px; 
+    height: 400px;
+    transform-style: preserve-3d;
+    transition: 1s ease;
+}
+
+#card.flipped {
+    transform: rotateY(180deg);
+}
+
+
+.card_front,
+.card_back {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backface-visibility: hidden;
+    /* Just styling the text nicely */
+    line-height: 400px;
+    color: rgb(255, 255, 255);
+    font-family: sans-serif;
+    font-weight: 800;
+    text-align: center;
+}
+
+.card_front {
+    z-index: 1;
+    background-color: var(--bs-gray-700);
+}
+
+.card_back {
+    transform: rotateY(180deg);
+    background-color: var(--bs-warning);
+}
+
+.deck:hover{
+    cursor: pointer;
+}
+
+
+
+.carousel-inner {
+    display: flex;
+    align-items: center;
+}
+
+.carousel-item {
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* slider do dark mode */
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bs-gray-700);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--bs-gray-100);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--bs-warning);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--bs-warning);
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;    
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/flashcard_logo.svg') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+</head>
+
+<body data-bs-theme>
+    {% block body %}{% endblock %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash">
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const flash = document.querySelector('.flash');
+            if (flash) {
+                setTimeout(() => {
+                    flash.style.opacity = '0';
+                    flash.style.transition = 'opacity 0.5s ease-out';
+                    setTimeout(() => {
+                        flash.style.display = 'none';
+                    }, 500); // Po zaniku ukryj całkowicie
+                }, 3000); // Ukryj po 3 sekundach
+            }
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/darkmode.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
+</body>
