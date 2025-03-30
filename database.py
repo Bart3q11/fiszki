@@ -22,11 +22,11 @@ class Decks(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  
     name = db.Column(db.String(50))
     description = db.Column(db.String(100))
-    cards = db.relationship('Cards', backref="deck", lazy=True)
+    cards = db.relationship('Cards', backref="deck", lazy=True, cascade="all, delete", passive_deletes=True)
 
 class Cards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_deck = db.Column(db.Integer, db.ForeignKey('decks.id'), nullable=False) 
+    id_deck = db.Column(db.Integer, db.ForeignKey('decks.id', ondelete="CASCADE"), nullable=False) 
     front = db.Column(db.String(50))
     back = db.Column(db.String(50))
     known = db.Column(db.Boolean, default=False)
