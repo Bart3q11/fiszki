@@ -26,6 +26,19 @@
     {% endwith %}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            const darkModeSwitch = document.getElementById("darkModeSwitch");
+            const currentTheme = localStorage.getItem("theme") || "light";
+            document.body.setAttribute("data-bs-theme", currentTheme);
+            document.body.className = currentTheme === "dark" ? "bg-dark text-light" : "bg-light text-dark";
+            darkModeSwitch.checked = currentTheme === "dark";
+
+            darkModeSwitch.addEventListener("change", function () {
+                const theme = darkModeSwitch.checked ? "dark" : "light";
+                document.body.setAttribute("data-bs-theme", theme);
+                document.body.className = theme === "dark" ? "bg-dark text-light" : "bg-light text-dark";
+                localStorage.setItem("theme", theme);
+            });
+
             const flash = document.querySelector('.flash');
             if (flash) {
                 setTimeout(() => {
@@ -33,11 +46,13 @@
                     flash.style.transition = 'opacity 0.5s ease-out';
                     setTimeout(() => {
                         flash.style.display = 'none';
-                    }, 500); // Po zaniku ukryj całkowicie
-                }, 3000); // Ukryj po 3 sekundach
+                    }, 500);
+                }, 3000);
             }
         });
     </script>
     <script src="{{ url_for('static', filename='js/darkmode.js')}}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
 </body>
+
+</html>

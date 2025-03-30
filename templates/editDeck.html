@@ -1,5 +1,4 @@
 {% extends 'layout.html' %}
-
 {% block body %}
 <nav class="navbar sticky-top">
     <div class="container-fluid">
@@ -64,90 +63,65 @@
     </div>
 </nav>
 
-<main class="d-flex justify-content-center align-items-center flex-wrap gap-4">
-    <div id="carouselExampleFade" class="container carousel slide carousel-fade shadow-sm p-3">
-        <div class="carousel-inner">
-            {% for card in cards %}
-            <div class="carousel-item {% if loop.first %}active{% endif %}">
-                <div class="d-block w-100 p-2" id="card">
-                    <div class="card_front fs-3">{{ card.front }}</div>
-                    <div class="card_back fs-3">{{ card.back }}</div>
-                </div>
-            </div>
-            {% endfor %}
+<form action="{{url_for('updateDeck', deck_id=deck_id)}}" method="post"
+    class="d-flex justify-content-center align-items-center flex-wrap">
+    <div class="container my-4 p-4 bg-secondary text-white rounded">
+        <div class="form-group mb-2">
+            <label for="name" class="fs-3">Zmień nazwę zestawu</label>
+            <input type="text" class="form-control focus-ring border" id="name" name="name" placeholder="np. Unit 1"
+                required style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" value="{{ deck.name }}">
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-    <div class="container ">
-        <div class="d-flex justify-content-around">
-            <button class="btn btn-outline-secondary" type="button">Tryb nauki</button>
-            <form action="{{ url_for('editDeck') }}" method="post">
-                <input type="hidden" name="deck_id" value="{{ deck_id }}">
-                <button class="btn btn-outline-secondary" type="submit">Edytuj</button>
-            </form>
-            <button class="btn btn-outline-secondary" type="button"
-                onclick="document.getElementById('id01').style.display='block'">Usuń</button>
+        <div class="form-group">
+            <label for="description" class="fs-3">Opis zestawu</label>
+            <input type="text" class="form-control focus-ring border" id="description" name="description"
+                placeholder="np. Pojęcia związane z Domem" required
+                style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" value="{{ deck.description }}">
         </div>
     </div>
-    <div class="container table-responsive mt-4">
-        <table class="table table-striped table-hover shadow-sm">
-            <thead class="bg-secondary text-white">
-                <tr>
-                    <th>Pojęcie</th>
-                    <th>Definicja</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for card in cards %}
-                <tr>
-                    <td>{{ card.front }}</td>
-                    <td>{{ card.back }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div id="id01" class="modal">
-        <div class="modal-content">
-            <div class="container">
-                <h1 class="fs-3">Usuń zestaw</h1>
-                <p class="fs-5">Czy na pewno chcesz usunąć ten zestaw? Tej operacji nie można cofnąć.</p>
-                <div class="d-flex justify-content-around mt-4">
-                    <button type="button" class="btn btn-secondary cancelbtn"
-                        onclick="document.getElementById('id01').style.display='none'">Anuluj</button>
-                    <form action="{{ url_for('deleteDeck') }}" method="post">
-                        <input type="hidden" name="deck_id" value="{{ deck_id }}">
-                        <button type="submit" class="btn btn-danger deletebtn">Usuń</button>
-                    </form>
+    <div class="container-fluid" id="cards_container">
+        {% for card in cards %}
+        <div id="card-{{ card.id }}" class="card-content">
+            <div class="container my-4 p-4 bg-secondary text-white rounded js-added-card">
+                <div class="row g-3 align-items-center">
+                    <div class="col-12 col-md-5">
+                        <input type="text" class="form-control focus-ring border" name="front" placeholder="Pojęcie"
+                            value="{{ card.front }}" required
+                            style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);">
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <input type="text" class="form-control focus-ring border" name="back" placeholder="Definicja"
+                            value="{{ card.back }}" required
+                            style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);">
+                    </div>
+                    <div class="col-12 col-md-2 text-center">
+                        <button type="button" class="btn btn-danger remove-card">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                fill="#e3e3e3" data-id="{{ card.id }}">
+                                <path
+                                    d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const cards = document.querySelectorAll("#card");
 
-            cards.forEach(card => {
-                card.addEventListener("click", function () {
-                    card.classList.toggle("flipped");
-                });
-            });
+    <div class="container d-flex justify-content-center align-items-center flex-wrap m-1">
+        <div type="submit" class="btn btn-warning text rounded-5 p-2" id="add-card-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" height="50px" width="50px" viewBox="0 -960 960 960"
+                fill="currentColor">
+                <path d=" M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+            </svg>
+        </div>
+    </div>
 
-            const modal = document.getElementById('id01');
-            window.onclick = function (event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            };
-        });
-    </script>
-</main>
+    <footer class="container d-flex justify-content-center align-items-center text-center sticky-bottom m-3">
+        <button type="submit" class="btn btn-warning fs-3">Zapisz zestaw</button>
+    </footer>
+</form>
 
-{% endblock %}
+<script src="{{ url_for('static', filename='js/createDeck.js') }}"></script>
+
+{% endblock body %}

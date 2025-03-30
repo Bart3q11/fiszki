@@ -1,17 +1,17 @@
 body {
     display: flex;
-    flex-wrap: nowrap;
     flex-direction: column;
+    background-color: var(--bs-body-bg); /* Dynamiczne tło */
 }
 
 ::-webkit-scrollbar {
     display: none;
 }
 
-/*Flipowanie karty*/
+/* Flipowanie karty */
 #card {
     position: relative;
-    width: 300px; 
+    width: 300px;
     height: 400px;
     transform-style: preserve-3d;
     transition: 1s ease;
@@ -21,16 +21,13 @@ body {
     transform: rotateY(180deg);
 }
 
-
 .card_front,
 .card_back {
     position: absolute;
     height: 100%;
     width: 100%;
     backface-visibility: hidden;
-    /* Just styling the text nicely */
     line-height: 400px;
-    color: rgb(255, 255, 255);
     font-family: sans-serif;
     font-weight: 800;
     text-align: center;
@@ -38,23 +35,26 @@ body {
 
 .card_front {
     z-index: 1;
-    background-color: var(--bs-gray-700);
+    background-color: var(--bs-card-bg);
+    color: var(--bs-font-color);
 }
 
 .card_back {
     transform: rotateY(180deg);
     background-color: var(--bs-warning);
+    color: var(--bs-font-color);
 }
 
-.deck:hover{
-    cursor: pointer;
+.deck {
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-card-border);
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-
-
-.carousel-inner {
-    display: flex;
-    align-items: center;
+.deck:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-item {
@@ -62,26 +62,27 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--bs-card-bg); /* Dynamiczne tło karuzeli */
 }
 
-
-/* slider do dark mode */
-/* The switch - the box around the slider */
+/* Slider do dark mode */
 .switch {
     position: relative;
     display: inline-block;
     width: 60px;
-    height: 34px;
+    height: 30px;
+    padding: 2px, 0;
+    margin-right: 20px;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-/* The slider */
 .slider {
     position: absolute;
     cursor: pointer;
@@ -90,8 +91,7 @@ body {
     right: 0;
     bottom: 0;
     background-color: var(--bs-gray-700);
-    -webkit-transition: .4s;
-    transition: .4s;
+    transition: 0.4s;
 }
 
 .slider:before {
@@ -99,32 +99,123 @@ body {
     content: "";
     height: 26px;
     width: 26px;
-    left: 4px;
-    bottom: 4px;
+    left: 2px;
+    bottom: 2px;
     background-color: var(--bs-gray-100);
-    -webkit-transition: .4s;
-    transition: .4s;
+    transition: 0.4s;
 }
 
 input:checked + .slider {
-    background-color: var(--bs-warning);
-}
-
-input:focus + .slider {
-    box-shadow: 0 0 1px var(--bs-warning);
+    background-color: var(--bs-card-bg);
 }
 
 input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
 
-/* Rounded sliders */
 .slider.round {
-    border-radius: 34px;    
+    border-radius: 34px;
 }
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+body[data-bs-theme="light"] {
+    --bs-secondary: #f8f9fa;
+    --bs-navbar-bg: #ffffff;
+    --bs-font-color: #212529;
+    --bs-body-bg: #ffffff;
+}
+
+body[data-bs-theme="dark"] {
+    --bs-secondary: #3a3f44; /* Mniej czarny odcień */
+    --bs-navbar-bg: #2b2f33; /* Mniej czarny odcień */
+    --bs-font-color: #f8f9fa; /* Jasny */
+    --bs-body-bg: #464646; /* Mniej czarny odcień */
+    --bs-card-bg: #2b2f33; /* Tło kart w trybie ciemnym */
+    --bs-card-border: #444; /* Ramka kart w trybie ciemnym */
+    --bs-table-bg: #0767c7; /* Tło tabeli w trybie ciemnym */
+    --bs-table-border: #444; /* Ramka tabeli w trybie ciemnym */
+}
+
+.navbar {
+    background-color: #edb926 !important;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.table {
+    background-color: var(--bs-table-bg) !important;
+    border: 1px solid var(--bs-table-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: center;
+}
+
+/* Modal (background) */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1050; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    padding-top: 50px;
+}
+
+
+.modal-content {
+    background-color: var(--bs-body-bg); 
+    margin: auto;
+    padding: 20px;
+    border: 1px solid var(--bs-card-border); 
+    border-radius: 8px;
+    width: 80%; 
+    max-width: 500px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal Body */
+.modal-body {
+    font-size: 1rem;
+    color: var(--bs-font-color); /* Dynamic text color */
+    margin-bottom: 20px;
+}
+
+
+/* Buttons */
+.modal.btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 8px;
+}
+
+.modal .cancelbtn {
+    background-color: var(--bs-secondary-bg); /* Dynamic background */
+    color: var(--bs-font-color); /* Dynamic text color */
+}
+
+.modal .cancelbtn:hover {
+    background-color: var(--bs-secondary); /* Highlight on hover */
+}
+
+.modal .deletebtn {
+    background-color: var(--bs-danger); /* Dynamic background */
+    color: var(--bs-light); /* Dynamic text color */
+}
+
+.modal .deletebtn:hover {
+    background-color: #c82333; /* Darker red on hover */
 }
