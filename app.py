@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from database import db, init_db, Decks, Users, Cards
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/flashcards'  # Poprawiony URL
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/flashcards'
 app.secret_key = 'ZAQ!2wsx'
 
 init_db(app)
@@ -103,20 +103,22 @@ def addDeck():
     if request.method == "POST" and session.get('id'):
         name = request.form.get('name')
         description = request.form.get('description')
-        deck = Decks (
+        deck = Decks(
             id_user=session.get('id'),
             name=name,
             description=description
         )
         db.session.add(deck)
-        db.session.commit()
+        db.session.commit()  
 
+        # Pobranie kart z formularza
         front = request.form.getlist('front')
         back = request.form.getlist('back')
 
+        # Dodanie kart do zestawu
         for term, definition in zip(front, back):
             card = Cards(
-                id_deck=deck.id, 
+                id_deck=deck.id,
                 front=term,
                 back=definition
             )
@@ -124,7 +126,11 @@ def addDeck():
 
         db.session.commit()
         
+        flash('Zestaw został pomyślnie dodany.', 'success')
         return redirect(url_for('dashboard'))
+
+    flash('Nie udało się dodać zestawu.', 'danger')
+    return redirect(url_for('dashboard'))
 
 @app.route('/deck/<deck_id>')
 def deck(deck_id):
@@ -132,6 +138,88 @@ def deck(deck_id):
         cards = Cards.query.filter_by(id_deck=deck_id).all()
         return render_template('deck.html', deck_id=deck_id, cards=cards)
     flash('')
+
+@app.route('/deleteDeck', methods=["POST"])
+def deleteDeck():
+    deck_id = request.form.get('deck_id')
+    if deck_id:
+        deck = Decks.query.get(deck_id)
+        if deck:
+            db.session.delete(deck)
+            db.session.commit()
+            flash('Zestaw został usunięty.', 'success')
+        else:
+            flash('Nie znaleziono zestawu.', 'danger')
+    else:
+        flash('Nie podano ID zestawu.', 'danger')
+    return redirect(url_for('dashboard'))
+
+@app.route('/editdeck/', methods=["POST"])
+def editDeck():
+    deck_id = request.form.get('deck_id')
+    if deck_id:
+        deck = Decks.query.get(deck_id)
+        if deck:
+            return redirect(url_for('modDeck', deck_id=deck_id))
+        else:
+            flash('Nie znaleziono zestawu.', 'danger')
+    else:
+        flash('Nie podano ID zestawu.', 'danger')
+    return redirect(url_for('dashboard'))
+
+@app.route('/moddeck/<deck_id>')
+def modDeck(deck_id):
+    deck = Decks.query.get(deck_id)
+    if deck:
+        cards = Cards.query.filter_by(id_deck=deck_id).all()
+        return render_template('editDeck.html', deck=deck, cards=cards, deck_id=deck_id)
+    else:
+        flash('Nie znaleziono zestawu.', 'danger')
+        return redirect(url_for('dashboard'))
+
+@app.route('/updateDeck/<int:deck_id>', methods=['POST'])
+def updateDeck(deck_id):
+    if not session.get('id'):
+        flash('Musisz być zalogowany, aby edytować zestawy.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    # Pobranie zestawu użytkownika
+    deck = Decks.query.filter_by(id=deck_id, id_user=session['id']).first()
+    if not deck:
+        flash('Nie znaleziono zestawu lub brak uprawnień.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    # Aktualizacja nazwy i opisu zestawu
+    deck.name = request.form.get('name', '').strip()
+    deck.description = request.form.get('description', '').strip()
+
+    if not deck.name or not deck.description:
+        flash('Nazwa i opis zestawu nie mogą być puste.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    # Pobranie istniejących kart
+    existing_cards = {card.id: card for card in Cards.query.filter_by(id_deck=deck_id).all()}
+
+    # Pobranie danych z formularza
+    fronts = request.form.getlist('front')
+    backs = request.form.getlist('back')
+
+    for i, (front, back) in enumerate(zip(fronts, backs)):
+        front, back = front.strip(), back.strip()
+        if not front or not back:
+            continue  # Ignorowanie pustych fiszek
+        new_card = Cards(id_deck=deck_id, front=front, back=back)
+        db.session.add(new_card)
+
+    # Usunięcie kart, które użytkownik skasował w formularzu
+    for card in existing_cards.values():
+        db.session.delete(card)
+
+    db.session.commit()  # Jeden commit na końcu
+
+    flash('Zestaw został pomyślnie zaktualizowany.', 'success')
+    return redirect(url_for('dashboard'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
