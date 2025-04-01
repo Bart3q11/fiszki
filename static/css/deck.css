@@ -1,0 +1,36 @@
+/* Flipowanie karty */
+#card {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    transform-style: preserve-3d;
+    transition: 1s ease;
+}
+
+#card.flipped {
+    transform: rotateY(180deg);
+}
+
+.card_front,
+.card_back {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backface-visibility: hidden;
+    line-height: 400px;
+    font-family: sans-serif;
+    font-weight: 800;
+    text-align: center;
+}
+
+.card_front {
+    z-index: 1;
+    background-color: var(--bs-card-bg);
+    color: var(--bs-font-color);
+}
+
+.card_back {
+    transform: rotateY(180deg);
+    background-color: #edb926;
+    color: var(--bs-font-color);
+}

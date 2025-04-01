@@ -58,12 +58,8 @@
                 </svg>
             </a>
         </div>
-
-
-
     </div>
 </nav>
-
 <main class="d-flex justify-content-center align-items-center flex-wrap gap-4">
     <div id="carouselExampleFade" class="container carousel slide carousel-fade shadow-sm p-3">
         <div class="carousel-inner">
@@ -87,9 +83,10 @@
     </div>
     <div class="container ">
         <div class="d-flex justify-content-around">
-            <button class="btn btn-outline-secondary" type="button">Tryb nauki</button>
-            <form action="{{ url_for('editDeck') }}" method="post">
-                <input type="hidden" name="deck_id" value="{{ deck_id }}">
+            <form action="{{ url_for('learningMode', deck_id=deck_id) }}" method="post">
+                <button class="btn btn-outline-secondary" type="submit">Tryb nauki</button>
+            </form>
+            <form action="{{ url_for('editDeck', deck_id=deck_id) }}" method="post">
                 <button class="btn btn-outline-secondary" type="submit">Edytuj</button>
             </form>
             <button class="btn btn-outline-secondary" type="button"
@@ -130,24 +127,25 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const cards = document.querySelectorAll("#card");
-
-            cards.forEach(card => {
-                card.addEventListener("click", function () {
-                    card.classList.toggle("flipped");
-                });
-            });
-
-            const modal = document.getElementById('id01');
-            window.onclick = function (event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            };
-        });
-    </script>
 </main>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/deck.css') }}">
+<script>
+    const cards = document.querySelectorAll("#card");
+    // Get the modal
+    var modal = document.getElementById('id01');
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    cards.forEach(card => {
+        card.addEventListener("click", function () {
+            card.classList.toggle("flipped");
+        });
+    });
+</script>
 
 {% endblock %}

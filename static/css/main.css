@@ -8,42 +8,6 @@ body {
     display: none;
 }
 
-/* Flipowanie karty */
-#card {
-    position: relative;
-    width: 300px;
-    height: 400px;
-    transform-style: preserve-3d;
-    transition: 1s ease;
-}
-
-#card.flipped {
-    transform: rotateY(180deg);
-}
-
-.card_front,
-.card_back {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    backface-visibility: hidden;
-    line-height: 400px;
-    font-family: sans-serif;
-    font-weight: 800;
-    text-align: center;
-}
-
-.card_front {
-    z-index: 1;
-    background-color: var(--bs-card-bg);
-    color: var(--bs-font-color);
-}
-
-.card_back {
-    transform: rotateY(180deg);
-    background-color: var(--bs-warning);
-    color: var(--bs-font-color);
-}
 
 .deck {
     background-color: var(--bs-body-bg);
@@ -126,6 +90,7 @@ body[data-bs-theme="light"] {
     --bs-navbar-bg: #ffffff;
     --bs-font-color: #212529;
     --bs-body-bg: #ffffff;
+    --text-color: black
 }
 
 body[data-bs-theme="dark"] {
@@ -137,15 +102,33 @@ body[data-bs-theme="dark"] {
     --bs-card-border: #444; /* Ramka kart w trybie ciemnym */
     --bs-table-bg: #0767c7; /* Tło tabeli w trybie ciemnym */
     --bs-table-border: #444; /* Ramka tabeli w trybie ciemnym */
+    --text-color: white;
 }
 
 .navbar {
     background-color: #edb926 !important;
 }
 
+.text {
+    color: var(--text-color); /* Kolor tekstu zależny od motywu */
+    transition: color 0.3s ease; /* Płynna zmiana koloru */
+}
+
 .btn {
     border-radius: 8px;
     font-weight: 600;
+}
+
+.js-added-card{
+    background-color: var(--bs-body-bg)!important;
+}
+
+.btn-edit{
+    background-color: #edb926 ;
+}
+
+.top-card{
+    background-color: var(--bs-body-bg)!important;
 }
 
 .table {

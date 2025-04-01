@@ -57,22 +57,18 @@
                 </svg>
             </a>
         </div>
-
-
-
     </div>
 </nav>
 
-<form action="{{url_for('updateDeck', deck_id=deck_id)}}" method="post"
-    class="d-flex justify-content-center align-items-center flex-wrap">
-    <div class="container my-4 p-4 bg-secondary text-white rounded">
+<form action="{{url_for('addDeck')}}" method="post" class="d-flex justify-content-center align-items-center flex-wrap">
+    <div class="container my-4 p-4 top-card text-white rounded">
         <div class="form-group mb-2">
-            <label for="name" class="fs-3">Zmień nazwę zestawu</label>
+            <label for="name" class="fs-3 text">Zmień nazwę zestawu</label>
             <input type="text" class="form-control focus-ring border" id="name" name="name" placeholder="np. Unit 1"
                 required style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" value="{{ deck.name }}">
         </div>
         <div class="form-group">
-            <label for="description" class="fs-3">Opis zestawu</label>
+            <label for="description" class="fs-3 text">Opis zestawu</label>
             <input type="text" class="form-control focus-ring border" id="description" name="description"
                 placeholder="np. Pojęcia związane z Domem" required
                 style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" value="{{ deck.description }}">
@@ -80,8 +76,8 @@
     </div>
     <div class="container-fluid" id="cards_container">
         {% for card in cards %}
-        <div id="card-{{ card.id }}" class="card-content">
-            <div class="container my-4 p-4 bg-secondary text-white rounded js-added-card">
+        <div id="{{ card.id }}" class="card-content">
+            <div class="container my-4 p-4 text-white rounded js-added-card">
                 <div class="row g-3 align-items-center">
                     <div class="col-12 col-md-5">
                         <input type="text" class="form-control focus-ring border" name="front" placeholder="Pojęcie"
@@ -96,7 +92,7 @@
                     <div class="col-12 col-md-2 text-center">
                         <button type="button" class="btn btn-danger remove-card">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                fill="#e3e3e3" data-id="{{ card.id }}">
+                                fill="#e3e3e3">
                                 <path
                                     d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                             </svg>
@@ -118,7 +114,9 @@
     </div>
 
     <footer class="container d-flex justify-content-center align-items-center text-center sticky-bottom m-3">
-        <button type="submit" class="btn btn-warning fs-3">Zapisz zestaw</button>
+        <form action="/" method="post">
+            <button type="submit" class="btn btn-warning text fs-3">Zapisz zestaw</button>
+        </form>
     </footer>
 </form>
 

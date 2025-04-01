@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const newCard = document.createElement("div");
         newCard.className = "card-content";
         newCard.innerHTML = `
-            <div class="container my-4 p-4 bg-secondary text-white rounded js-added-card">
+            <div class="container my-4 p-4 text-white rounded js-added-card">
                 <div class="row g-3 align-items-center">
                     <div class="col-12 col-md-5">
                         <input type="text" class="form-control focus-ring border" name="front" placeholder="Pojęcie" required

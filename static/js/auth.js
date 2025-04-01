@@ -16,6 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
         login.style.display = "none";
         signup.style.display = "block";
     });
+
+    const passwordInput = document.getElementById("signup-password"); // Pole "Hasło"
+    const rePasswordInput = document.getElementById("re-password"); // Pole "Powtórz hasło"
+
+    signup.addEventListener("submit", function (event) {
+        // Sprawdzenie, czy hasła są zgodne
+        if (passwordInput.value !== rePasswordInput.value) {
+            event.preventDefault(); // Zatrzymanie wysyłania formularza
+            alert("Hasła nie są zgodne!"); // Wyświetlenie komunikatu błędu
+        }
+    });
 });
 
 

@@ -57,23 +57,20 @@
                 </svg>
             </a>
         </div>
-
-
-
     </div>
 </nav>
 
 <form action="{{url_for('addDeck')}}" method="post" class="d-flex justify-content-center align-items-center flex-wrap">
-    <div class="container my-4 p-4 bg-secondary text-white rounded">
+    <div class="container my-4 p-4 text-white rounded top-card">
         <div class="form-group mb-2">
-            <label for="name" class="fs-3">Podaj nazwę zestawu</label>
+            <label for="name" class="fs-3 text">Podaj nazwę zestawu</label>
             <input type="text" class="form-control focus-ring border" id="name" name="name" placeholder="np. Unit 1"
                 required style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);">
         </div>
         <div class="form-group">
-            <label for="description" class="fs-3">Opis zestawu</label>
-            <input type="text" class="form-control focus-ring border" id="description" name="description"
-                placeholder="np. Pojęcia związane z Domem" required
+            <label for="description" class="fs-3 text">Opis zestawu</label>
+            <input type="text" class="form-control focus-ring border" id="description
+               " name="description" placeholder="np. Pojęcia związane z Domem" required
                 style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);">
         </div>
     </div>
@@ -90,7 +87,9 @@
     </div>
 
     <footer class="container d-flex justify-content-center align-items-center text-center sticky-bottom m-3">
-        <button type="submit" class="btn btn-warning fs-3">Zapisz zestaw</button>
+        <form action="/" method="post">
+            <button type="submit" class="btn btn-warning fs-3">Zapisz zestaw</button>
+        </form>
     </footer>
 </form>
 
