@@ -72,6 +72,14 @@ def login():
             return redirect(url_for('auth'))
     return redirect(url_for('auth'))
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    response = redirect(url_for('auth'))
+    response.set_cookie('session', '', expires=0)
+    flash("Wylogowano pomyślnie")
+    return response
+
 @app.route('/dashboard')
 def dashboard():
     if session.get('id'):

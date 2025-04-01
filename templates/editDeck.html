@@ -60,7 +60,8 @@
     </div>
 </nav>
 
-<form action="{{url_for('addDeck')}}" method="post" class="d-flex justify-content-center align-items-center flex-wrap">
+<form action="{{url_for('updateDeck', deck_id=deck.id)}}" method="post"
+    class="d-flex justify-content-center align-items-center flex-wrap">
     <div class="container my-4 p-4 top-card text-white rounded">
         <div class="form-group mb-2">
             <label for="name" class="fs-3 text">Zmień nazwę zestawu</label>
