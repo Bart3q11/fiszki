@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, url_for, redirect, flash, session
+from flask import Flask, render_template, request, url_for, redirect, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
 from database import db, init_db, Decks, Users, Cards
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/flashcards'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/flashcards'  # Poprawiony URL
 app.secret_key = 'ZAQ!2wsx'
 
 init_db(app)
@@ -111,11 +111,9 @@ def addDeck():
         db.session.add(deck)
         db.session.commit()  
 
-        # Pobranie kart z formularza
         front = request.form.getlist('front')
         back = request.form.getlist('back')
 
-        # Dodanie kart do zestawu
         for term, definition in zip(front, back):
             card = Cards(
                 id_deck=deck.id,
@@ -154,28 +152,15 @@ def deleteDeck():
         flash('Nie podano ID zestawu.', 'danger')
     return redirect(url_for('dashboard'))
 
-@app.route('/editdeck/', methods=["POST"])
-def editDeck():
-    deck_id = request.form.get('deck_id')
-    if deck_id:
-        deck = Decks.query.get(deck_id)
-        if deck:
-            return redirect(url_for('modDeck', deck_id=deck_id))
-        else:
-            flash('Nie znaleziono zestawu.', 'danger')
-    else:
-        flash('Nie podano ID zestawu.', 'danger')
-    return redirect(url_for('dashboard'))
-
-@app.route('/moddeck/<deck_id>')
-def modDeck(deck_id):
+@app.route('/editdeck/<deck_id>', methods=["POST"])
+def editDeck(deck_id):
     deck = Decks.query.get(deck_id)
     if deck:
         cards = Cards.query.filter_by(id_deck=deck_id).all()
         return render_template('editDeck.html', deck=deck, cards=cards, deck_id=deck_id)
     else:
         flash('Nie znaleziono zestawu.', 'danger')
-        return redirect(url_for('dashboard'))
+    return redirect(url_for('dashboard'))
 
 @app.route('/updateDeck/<int:deck_id>', methods=['POST'])
 def updateDeck(deck_id):
@@ -215,10 +200,71 @@ def updateDeck(deck_id):
     for card in existing_cards.values():
         db.session.delete(card)
 
-    db.session.commit()  # Jeden commit na końcu
+    db.session.commit()
 
     flash('Zestaw został pomyślnie zaktualizowany.', 'success')
     return redirect(url_for('dashboard'))
+
+@app.route('/learningMode/<int:deck_id>', methods=["POST"])
+def learningMode(deck_id):
+    if session.get('id'):
+        cart_count = Cards.query.filter_by(id_deck=deck_id).count()
+        known_card = Cards.query.filter_by(id_deck=deck_id, known=1).count()
+        return render_template('learningMode.html', deck_id=deck_id, cart_count=cart_count,known_card=known_card)
+    else:
+        flash('Musisz być zalogowany, aby korzystać z trybu nauki.', 'danger')
+        return redirect(url_for('auth'))
+
+@app.route('/api/deck/<int:deck_id>/cards', methods=['GET'])
+def get_cards(deck_id):
+    if not session.get('id'):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    cards = Cards.query.filter_by(id_deck=deck_id, known=0).all()
+    if not cards:
+        return jsonify({"error": "Deck not found or no cards available"}), 404
+
+    # Serializacja danych kart
+    cards_data = [{"id": card.id, "front": card.front, "back": card.back, "known": card.known} for card in cards]
+    return jsonify(cards_data), 200
+
+
+@app.route('/api/deck/<int:deck_id>/reset', methods=['POST'])
+def reset_deck_cards(deck_id):
+    if not session.get('id'):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    cards = Cards.query.filter_by(id_deck=deck_id).all()
+    if not cards:
+        return jsonify({"error": "Deck not found or no cards available"}), 404
+
+    try:
+        for card in cards:
+            card.known = False
+        db.session.commit()
+        return jsonify({"message": "All cards reset to unknown"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to reset cards", "details": str(e)}), 500
+
+@app.route('/api/card/<int:card_id>/update', methods=['POST'])
+def update_card_status(card_id):
+    if not session.get('id'):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    card = Cards.query.get(card_id)
+    if not card:
+        return jsonify({"error": "Card not found"}), 404
+
+    try:
+        data = request.get_json()
+        known_status = data.get("known", False)
+        card.known = known_status
+        db.session.commit()
+        return jsonify({"message": "Card status updated successfully", "card_id": card_id, "known": card.known}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to update card status", "details": str(e)}), 500
 
 
 if __name__ == '__main__':

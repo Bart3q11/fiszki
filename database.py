@@ -30,7 +30,7 @@ class Cards(db.Model):
     front = db.Column(db.String(50))
     back = db.Column(db.String(50))
     known = db.Column(db.Boolean, default=False)
-
+        
 def init_db(app):
     db.init_app(app)
     with app.app_context():
