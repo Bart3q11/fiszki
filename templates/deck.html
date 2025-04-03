@@ -91,6 +91,7 @@
             </form>
             <button class="btn btn-outline-secondary" type="button"
                 onclick="document.getElementById('id01').style.display='block'">Usuń</button>
+            <a href="{{ url_for('exportDeck', deck_id=deck_id) }}" class="btn btn-success">Eksportuj do JSON</a>
         </div>
     </div>
     <div class="container table-responsive mt-4">
@@ -111,6 +112,7 @@
             </tbody>
         </table>
     </div>
+
     <div id="id01" class="modal">
         <div class="modal-content">
             <div class="container">

@@ -1,65 +1,108 @@
-{% extends 'layout.html' %}
-{% block body %}
-<div id="login">
-    <div class="d-flex justify-content-center align-items-center vh-100">
-        <form action="{{url_for('login')}}" method="post" class="border border-warning-subtle p-4 rounded shadow m-1"
-            style="width: min(600px, 100%);">
-            <div class="mb-3">
-                <label for="email" class="form-label">Adres e-mail</label>
-                <input type="email" class="form-control focus-ring border" id="email" placeholder="Wpisz e-mail"
-                    style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" name="email" required>
-            </div>
-            <div class=" mb-3">
-                <label for="password" class="form-label">Hasło</label>
-                <input type="password" class="form-control focus-ring border" id="password" placeholder="Wpisz hasło"
-                    style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" name="password" required>
-            </div>
-            <div class="d-grid gap-2 mb-3">
-                <button type="submit" class="btn btn-warning text-white">Zaloguj się</button>
-            </div>
-            <p>Nie masz konta? <a class="text-warning" id="signup-btn">Zarejestruj się</a></p>
-        </form>
-    </div>
-</div>
-<div id="signup">
-    <div class="d-flex justify-content-center align-items-center vh-100">
-        <form action="{{ url_for('signup') }}" method="post" class="border border-warning-subtle p-4 rounded shadow m-1"
-            style="width: min(600px, 100%);">
-            <div class="mb-3">
-                <label for="first-name" class="form-label">Imie</label>
-                <input type="text" class="form-control focus-ring border" id="first-name" placeholder="Wpisz imie"
-                    style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" name="first-name" required>
-            </div>
-            <div class="mb-3">
-                <label for="last-name" class="form-label">Nazwisko</label>
-                <input type="text" class="form-control focus-ring border" id="last-name" placeholder="Wpisz nazwisko"
-                    style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" name="last-name" required>
-            </div>
-            <div class="mb-3">
-                <label for="signup-email" class="form-label">Adres e-mail</label>
-                <input type="email" class="form-control focus-ring border" id="signup-email" placeholder="Wpisz e-mail"
-                    style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" name="email" required>
-            </div>
-            <div class="mb-3">
-                <label for="signup-password" class="form-label">Hasło</label>
-                <input type="password" class="form-control focus-ring border" id="signup-password"
-                    placeholder="Wpisz hasło" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
-                    name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                    title="Hasło musi składać się z cyfty, małej, dużej itery, znaku specjalnego i mieć conajmniej 8 znaków">
-            </div>
-            <div class="mb-3">
-                <label for="re-password" class="form-label">Powtórz hasło</label>
-                <input type="password" class="form-control focus-ring border" id="re-password"
-                    placeholder="Wpisz ponownie hasło" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
-                    required>
-            </div>
-            <div class="d-grid gap-2 mb-3">
-                <button type="submit" class="btn btn-warning text-white">Zarejestruj się</button>
-            </div>
-            <p>Masz konto? <a id="login-btn" class="text-warning">Zaloguj się</a></p>
-        </form>
-    </div>
-</div>
-<script src="{{url_for('static', filename='js/auth.js')}}"></script>
+<!DOCTYPE html>
+<html lang="pl">
 
-{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body data-bs-theme>
+    <!-- Sekcja wiadomości flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="container mt-3">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Formularz logowania -->
+    {% block body %}
+    <div id="login">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <form action="{{url_for('login')}}" method="post" class="border border-warning-subtle p-4 rounded shadow-lg"
+                style="width: min(400px, 100%);">
+                <h2 class="text-center mb-4">Logowanie</h2>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Adres e-mail</label>
+                    <input type="email" class="form-control" id="email" placeholder="Wpisz e-mail" name="email"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Hasło</label>
+                    <input type="password" class="form-control" id="password" placeholder="Wpisz hasło" name="password"
+                        required>
+                </div>
+                <div class="d-grid gap-2 mb-3">
+                    <button type="submit" class="btn btn-warning text-white">Zaloguj się</button>
+                </div>
+                <p class="text-center">Nie masz konta? <a class="text-warning" id="signup-btn">Zarejestruj się</a></p>
+            </form>
+        </div>
+    </div>
+    <div id="signup">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <form action="{{ url_for('signup') }}" method="post"
+                class="border border-warning-subtle p-4 rounded shadow m-1" style="width: min(600px, 100%);">
+                <h2 class="text-center mb-4">Rejestracja</h2>
+                <div class="mb-3">
+                    <label for="first-name" class="form-label">Imie</label>
+                    <input type="text" class="form-control focus-ring border" id="first-name" placeholder="Wpisz imie"
+                        style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);" name="first-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="last-name" class="form-label">Nazwisko</label>
+                    <input type="text" class="form-control focus-ring border" id="last-name"
+                        placeholder="Wpisz nazwisko" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        name="last-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="signup-email" class="form-label">Adres e-mail</label>
+                    <input type="email" class="form-control focus-ring border" id="signup-email"
+                        placeholder="Wpisz e-mail" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="signup-password" class="form-label">Hasło</label>
+                    <input type="password" class="form-control focus-ring border" id="signup-password"
+                        placeholder="Wpisz hasło" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                        title="Hasło musi składać się z cyfty, małej, dużej itery, znaku specjalnego i mieć conajmniej 8 znaków">
+                </div>
+                <div class="mb-3">
+                    <label for="re-password" class="form-label">Powtórz hasło</label>
+                    <input type="password" class="form-control focus-ring border" id="re-password"
+                        placeholder="Wpisz ponownie hasło" style="--bs-focus-ring-color: var(--bs-warning-bg-subtle);"
+                        required>
+                </div>
+                <div class="d-grid gap-2 mb-3">
+                    <button type="submit" class="btn btn-warning text-white">Zarejestruj się</button>
+                </div>
+                <p>Masz konto? <a id="login-btn" class="text-warning">Zaloguj się</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="{{url_for('static', filename='js/auth.js')}}"></script>
+    {% endblock %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const currentTheme = localStorage.getItem("theme") || (systemPrefersDark ? "dark" : "light");
+
+            document.body.setAttribute("data-bs-theme", currentTheme);
+            document.body.className = currentTheme === "dark" ? "bg-dark text-light" : "bg-light text-dark";
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+
+</html>

@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
-
-
 from database import db, init_db, Decks, Users, Cards
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/flashcards'  # Poprawiony URL
@@ -25,12 +24,12 @@ def signup():
         email = request.form.get('email')
         password = request.form.get('password')
         if not email or not password or not first_name or not last_name:
-            flash('Błąd dodania do bazy danych. Spróbuj ponownie')
+            flash('Błąd dodania do bazy danych. Uzupełnij wszystkie pola i spróbuj ponownie.', 'danger')
             return redirect(url_for('auth'))  
         
         existing_user = Users.query.filter_by(email=email).first()
         if existing_user:
-            flash('Adres email jest już zajęty')
+            flash('Adres email jest już zajęty. Wybierz inny adres email.', 'warning')
             return redirect(url_for('form'))
         
         user = Users(
@@ -42,15 +41,61 @@ def signup():
 
         db.session.add(user)
         db.session.commit()
-        flash('Zarejestorano pomyślnie')
+        flash('Zarejestrowano pomyślnie. Możesz się teraz zalogować.', 'success')
         return redirect(url_for("auth")) 
-    flash("Coś poszło nie tak. Spróbuj ponownie")
+    flash("Wystąpił błąd. Spróbuj ponownie później.", 'danger')
     return redirect(url_for("auth"))
 
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
 def account():
-    if session.get('id'):
-        return render_template('account.html')
+    if not session.get('id'):
+        flash('Musisz być zalogowany, aby uzyskać dostęp do tej strony.', 'warning')
+        return redirect(url_for('auth'))
+
+    user = Users.query.filter_by(id=session['id']).first()
+
+    if request.method == 'POST':
+        # Aktualizacja danych użytkownika
+        first_name = request.form.get('first-name', '').strip()
+        last_name = request.form.get('last-name', '').strip()
+        email = request.form.get('email', '').strip()
+
+        if first_name:
+            user.first_name = first_name
+        if last_name:
+            user.last_name = last_name
+        if email and email != user.email:
+            existing_user = Users.query.filter_by(email=email).first()
+            if existing_user:
+                flash('Podany adres e-mail jest już zajęty. Wybierz inny.', 'danger')
+                return redirect(url_for('account'))
+            user.email = email
+
+        # Zmiana hasła
+        current_password = request.form.get('current-password', '').strip()
+        new_password = request.form.get('new-password', '').strip()
+        confirm_password = request.form.get('confirm-password', '').strip()
+
+        if current_password or new_password or confirm_password:
+            if not user.check_password(current_password):
+                flash('Obecne hasło jest nieprawidłowe.', 'danger')
+                return redirect(url_for('account'))
+
+            if new_password != confirm_password:
+                flash('Nowe hasło i potwierdzenie hasła muszą być takie same.', 'danger')
+                return redirect(url_for('account'))
+
+            if len(new_password) < 8 or not any(char.isdigit() for char in new_password) or not any(char.isupper() for char in new_password) or not any(char.islower() for char in new_password):
+                flash('Nowe hasło musi mieć co najmniej 8 znaków, zawierać cyfrę, małą i dużą literę.', 'danger')
+                return redirect(url_for('account'))
+
+            user.set_password(new_password)
+
+        db.session.commit()
+        flash('Dane zostały pomyślnie zaktualizowane.', 'success')
+        return redirect(url_for('account'))
+
+    return render_template('account.html', user=user)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -59,7 +104,7 @@ def login():
         password = request.form['password']
 
         if not email or not password:
-            flash('Coś poszło nie tak. Spróbuj ponownie')
+            flash('Wystąpił błąd. Spróbuj ponownie później.', 'danger')
             return redirect(url_for('auth'))
 
         user = Users.query.filter_by(email=email).first()
@@ -68,7 +113,7 @@ def login():
             session['id'] = user.id
             return redirect(url_for('dashboard'))
         else:
-            flash('Nie prawidłowe hasło lub email')
+            flash('Nieprawidłowe dane logowania. Sprawdź email i hasło.', 'danger')
             return redirect(url_for('auth'))
     return redirect(url_for('auth'))
 
@@ -77,7 +122,7 @@ def logout():
     session.clear()
     response = redirect(url_for('auth'))
     response.set_cookie('session', '', expires=0)
-    flash("Wylogowano pomyślnie")
+    flash("Wylogowano pomyślnie. Do zobaczenia!", 'success')
     return response
 
 @app.route('/dashboard')
@@ -97,6 +142,7 @@ def dashboard():
             })
         return render_template('dashboard.html', decks=decks_data, deck_count=deck_count, user=user)
     else:
+        flash('Musisz być zalogowany, aby uzyskać dostęp do tej strony.', 'warning')
         return redirect(url_for('auth'))
 
 @app.route('/createDeck', methods=['POST'])
@@ -135,15 +181,22 @@ def addDeck():
         flash('Zestaw został pomyślnie dodany.', 'success')
         return redirect(url_for('dashboard'))
 
-    flash('Nie udało się dodać zestawu.', 'danger')
+    flash('Nie udało się dodać zestawu. Spróbuj ponownie.', 'danger')
     return redirect(url_for('dashboard'))
 
 @app.route('/deck/<deck_id>')
 def deck(deck_id):
     if session.get('id'):
+        deck = Decks.query.filter_by(id=deck_id, id_user=session['id']).first()
+        if not deck:
+            flash('Nie znaleziono zestawu lub brak uprawnień do jego wyświetlenia.', 'danger')
+            return redirect(url_for("dashboard"))
+        
         cards = Cards.query.filter_by(id_deck=deck_id).all()
         return render_template('deck.html', deck_id=deck_id, cards=cards)
-    flash('')
+    
+    flash('Musisz być zalogowany, aby uzyskać dostęp do tej strony.', 'warning')
+    return redirect(url_for("dashboard"))
 
 @app.route('/deleteDeck', methods=["POST"])
 def deleteDeck():
@@ -153,11 +206,11 @@ def deleteDeck():
         if deck:
             db.session.delete(deck)
             db.session.commit()
-            flash('Zestaw został usunięty.', 'success')
+            flash('Zestaw został usunięty pomyślnie.', 'success')
         else:
             flash('Nie znaleziono zestawu.', 'danger')
     else:
-        flash('Nie podano ID zestawu.', 'danger')
+        flash('Nie podano ID zestawu. Spróbuj ponownie.', 'warning')
     return redirect(url_for('dashboard'))
 
 @app.route('/editdeck/<deck_id>', methods=["POST"])
@@ -167,19 +220,19 @@ def editDeck(deck_id):
         cards = Cards.query.filter_by(id_deck=deck_id).all()
         return render_template('editDeck.html', deck=deck, cards=cards, deck_id=deck_id)
     else:
-        flash('Nie znaleziono zestawu.', 'danger')
+        flash('Nie znaleziono zestawu do edycji.', 'danger')
     return redirect(url_for('dashboard'))
 
 @app.route('/updateDeck/<int:deck_id>', methods=['POST'])
 def updateDeck(deck_id):
     if not session.get('id'):
-        flash('Musisz być zalogowany, aby edytować zestawy.', 'danger')
+        flash('Musisz być zalogowany, aby edytować zestawy.', 'warning')
         return redirect(url_for('dashboard'))
 
     # Pobranie zestawu użytkownika
     deck = Decks.query.filter_by(id=deck_id, id_user=session['id']).first()
     if not deck:
-        flash('Nie znaleziono zestawu lub brak uprawnień.', 'danger')
+        flash('Nie znaleziono zestawu lub brak uprawnień do edycji.', 'danger')
         return redirect(url_for('dashboard'))
 
     # Aktualizacja nazwy i opisu zestawu
@@ -187,7 +240,7 @@ def updateDeck(deck_id):
     deck.description = request.form.get('description', '').strip()
 
     if not deck.name or not deck.description:
-        flash('Nazwa i opis zestawu nie mogą być puste.', 'danger')
+        flash('Nazwa i opis zestawu nie mogą być puste. Uzupełnij dane i spróbuj ponownie.', 'warning')
         return redirect(url_for('dashboard'))
 
     # Pobranie istniejących kart
@@ -220,7 +273,7 @@ def learningMode(deck_id):
         known_card = Cards.query.filter_by(id_deck=deck_id, known=1).count()
         return render_template('learningMode.html', deck_id=deck_id, cart_count=cart_count,known_card=known_card)
     else:
-        flash('Musisz być zalogowany, aby korzystać z trybu nauki.', 'danger')
+        flash('Musisz być zalogowany, aby korzystać z trybu nauki.', 'warning')
         return redirect(url_for('auth'))
 
 @app.route('/api/deck/<int:deck_id>/cards', methods=['GET'])
@@ -274,6 +327,72 @@ def update_card_status(card_id):
         db.session.rollback()
         return jsonify({"error": "Failed to update card status", "details": str(e)}), 500
 
+@app.route('/exportDeck/<int:deck_id>', methods=['GET'])
+def exportDeck(deck_id):
+    if not session.get('id'):
+        flash('Musisz być zalogowany, aby eksportować zestawy.', 'warning')
+        return redirect(url_for('auth'))
+
+    deck = Decks.query.filter_by(id=deck_id, id_user=session['id']).first()
+    if not deck:
+        flash('Nie znaleziono zestawu lub brak uprawnień.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    cards = Cards.query.filter_by(id_deck=deck_id).all()
+    deck_data = {
+        "deck_name": deck.name,
+        "deck_description": deck.description,
+        "cards": [{"front": card.front, "back": card.back} for card in cards]
+    }
+
+    # Serializacja JSON z polskimi znakami
+    response = app.response_class(
+        response=json.dumps(deck_data, ensure_ascii=False),  # ensure_ascii=False zachowuje polskie znaki
+        status=200,
+        mimetype='application/json'
+    )
+    response.headers['Content-Disposition'] = f'attachment; filename={deck.name}.json'
+    return response
+
+@app.route('/importDeck', methods=['POST'])
+def importDeck():
+    if not session.get('id'):
+        flash('Musisz być zalogowany, aby importować zestawy.', 'warning')
+        return redirect(url_for('auth'))
+
+    file = request.files.get('file')
+    if not file:
+        flash('Nie wybrano pliku do importu.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    try:
+        data = json.load(file)
+        name = data.get('deck_name', 'Nowy zestaw')
+        description = data.get('deck_description', '')
+        cards = data.get('cards', [])
+
+        deck = Decks(
+            id_user=session.get('id'),
+            name=name,
+            description=description
+        )
+        db.session.add(deck)
+        db.session.commit()
+
+        for card in cards:
+            new_card = Cards(
+                id_deck=deck.id,
+                front=card.get('front', ''),
+                back=card.get('back', '')
+            )
+            db.session.add(new_card)
+
+        db.session.commit()
+        flash('Zestaw został pomyślnie zaimportowany.', 'success')
+    except Exception as e:
+        flash(f'Wystąpił błąd podczas importu: {str(e)}', 'danger')
+
+    return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
     app.run(debug=True)

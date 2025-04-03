@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             cardBack.textContent = "";
             knowBtn.disabled = true;
             dontKnowBtn.disabled = true;
+            location.reload()
         }
     }
 

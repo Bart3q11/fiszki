@@ -1,6 +1,5 @@
 {% extends 'layout.html' %}
 
-
 {% block body %}
 <nav class="navbar sticky-top">
     <div class="container-fluid">
@@ -67,6 +66,12 @@
         Witaj {{ user.first_name }} {{ user.last_name }}!
     </h1>
     <h2 class="fs-2">Aktualnie posiadasz {{deck_count}} zestawów</h2>
+    <form action="{{ url_for('importDeck') }}" method="post" enctype="multipart/form-data"
+        class="d-flex align-items-center">
+        <label for="file" class="form-label me-2 mb-0">Importuj zestaw</label>
+        <input type="file" class="form-control me-2" id="file" name="file" accept=".json" required>
+        <button type="submit" class="btn btn-success">Importuj</button>
+    </form>
 </div>
 
 <main class="d-flex justify-content-center align-items-center flex-wrap gap-3">
